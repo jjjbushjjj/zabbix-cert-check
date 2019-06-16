@@ -14,11 +14,11 @@ global to_zabbix
 to_zabbix = {}
 
 
-def metric_send(item, val, host, zbx_serv, zbx_serv_port):
+def metric_send(item, val, host, zbx_serv, zbx_serv_port, zbx_sender_bin):
     ''' Sends metric to zabbix '''
 
     print "This is sent to zabbix: item - %s value - %s" % (item, val)
-    subprocess.call(["/usr/sbin/zabbix-sender",
+    subprocess.call([zbx_sender_bin,
                          "-z",
                          zbx_serv,
                          "-p",
@@ -165,14 +165,16 @@ def main():
             metric_send('srv.discovery', dis_val,
                     config['zabbix']['zabbix_hostname'],
                     config['zabbix']['zabbix_server_url'],
-                    config['zabbix']['zabbix_server_port'])
+                    config['zabbix']['zabbix_server_port'],
+		    config['zabbix']['zabbix_sender'])
             # Send items to zabbix
             for (key, val) in to_zabbix.items():
                 dis_key = 'srv.ex['+HOST+','+key+']'
                 metric_send(dis_key, str(val),
-                            config['zabbix']['zabbix_hostname'],
+                        config['zabbix']['zabbix_hostname'],
                         config['zabbix']['zabbix_server_url'],
-                        config['zabbix']['zabbix_server_port'])
+                        config['zabbix']['zabbix_server_port'],
+			config['zabbix']['zabbix_sender'])
 
 
 if __name__ == "__main__":
