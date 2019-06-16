@@ -45,26 +45,26 @@ def pyopenssl_check_callback(connection, x509, errnum, errdepth, ok):
 
     ex_count = x509.get_extension_count()
     for ext in range(0,ex_count):
-        #print "EXTENSION %s" % ext
+        # print "EXTENSION %s" % ext
         extent = x509.get_extension(ext)
         if extent.__str__().find('CA:TRUE') >= 0:
-       #     print "don't check CA part just exit"
-            return ok
+           # print "don't check CA part just exit"
+           return ok
         if extent.__str__().find('DNS') >= 0:
-        #    print "Yay!! find alt dns names!"
-        #    print extent.__str__()
-            dns_alt_names = extent.__str__()
-            break
+           # print "Yay!! find alt dns names!"
+           # print extent.__str__()
+           dns_alt_names = extent.__str__()
+           break
     # Check if certificate consist host in it fields
     if x509.get_subject().commonName == HOST:
         good_cert = 1
-    #    print "1st check %s" % x509.get_subject().commonName
+        # print "1st check %s" % x509.get_subject().commonName
     if x509.get_subject().commonName.split('.')[1:] == HOST.split('.')[1:]:
         good_cert = 1
-    #    print "2nd check %s" % x509.get_subject().commonName.split('.')[1:]
-    if dns_alt_names.find(HOST) >= 0 or dns_alt_names.find(HOST.split('.')[1:]):
+        # print "2nd check %s" % x509.get_subject().commonName.split('.')[1:]
+    if dns_alt_names.find(HOST) >= 0: 
         good_cert = 1
-    #    print "3rd check %s" % dns_alt_names.find(HOST)
+        # print "3rd check %s" % dns_alt_names.find(HOST)
 
     if good_cert == 1:
         to_zabbix['commonName'] = x509.get_subject().commonName
@@ -79,7 +79,7 @@ def pyopenssl_check_expiration(asn1):
     ''' Return the numbers of day before expiration. False if expired.'''
     try:
         expire_date = datetime.strptime(asn1, "%Y%m%d%H%M%SZ")
-        #print "Expire Date: %s" % expire_date
+        # print "Expire Date: %s" % expire_date
     except:
         exit_error(1, 'Certificate date format unknow.')
 
